@@ -59,9 +59,6 @@ def getVersion():
             else:
                 clear()
                 try:
-                    bannerTX = open('README.md', encoding='utf-8').read()
-                    print(bannerTX[219:1541].replace('#','').replace('*','').replace('-','•'))
-                    print(f'\n{LI_G}Этот текст покажется лишь один раз!{RESET}')
                     input(f'{LI_G}Нажмите ENTER чтобы продолжить: {RESET}')
                     open('.banner_840','w')
                     clear()

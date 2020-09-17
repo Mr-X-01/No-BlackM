@@ -84,6 +84,25 @@ def getVersion():
                             print(f'{YELLOW}{BOLD}[#] {LI_G}Подготовка... {RESET}')
                         except PermissionError:
                             pass
+                    except KeyboardInterrupt:
+                    sys.exit(f'\n{YELLOW}{BOLD}[!] {RED}Принудительная остановка кода{RESET}')
+
+            if os.path.exists('dataFile.txt'):
+                try:
+                    clear()
+                    print(f'{CYAN}{BOLD}[1] {LI_G}Перезаписать данные в файл.{RESET}')
+                    dataV = input(f'{CYAN}{BOLD}[~] {LI_G}Выберите метод. ENTER - Добавить к остальным: {RESET}')
+                    if dataV == '1':
+                        try:
+                            os.remove('dataFile.txt')
+                            clear() 
+                            print(f'{YELLOW}{BOLD}[+] {LI_G}Данные будут:{RESET} Перезаписаны')
+                            sleep(0.5)
+                            
+                            clear()
+                            print(f'{YELLOW}{BOLD}[#] {LI_G}Подготовка... {RESET}')
+                        except PermissionError:
+                            pass
                     else:
                         clear()
                         print(f'{YELLOW}{BOLD}[+] {LI_G}Данные будут:{RESET} Добавлены к остальным')
@@ -96,7 +115,7 @@ def getVersion():
             else:
                 clear()
                 print(f'{YELLOW}{BOLD}[#] {LI_G}Подготовка... {RESET}')
-            versioUR = requests.get('https://github.com/DataSC3/No-BlackM')
+            versioUR = requests.get('https://github.com/Mr-X-01/No-BlackM')
             versioURL = bs(versioUR.text, 'html.parser')
             get_version = versioURL.find(['span'], class_='d-none d-sm-inline').findNext(['strong']).text
             clear()
@@ -168,6 +187,7 @@ def receiving_data_ip():
             resIP = requests.get('https://httpbin.org/ip')
             resultIP = resIP.text.split()[2].strip('"')
 
+            print(f'{CYAN}{BOLD}[#] {LI_G}Поддержка: {DARK}https://www.donationalerts.com/r/No_BlackMail{RESET}')
             print(f'{CYAN}{BOLD}[#] {LI_G}Ваш IP: {DARK}{resultIP}{RESET}')
             ip = input(f'{CYAN}{BOLD}[~] {LI_G}Введите IP: {RESET}').strip()
 
@@ -288,6 +308,8 @@ def num_mnp_request():
     while True:
         try:
             banner_mnp()
+            
+            print(f'{PINK}{BOLD}[#] {LI_G}Поддержка: {DARK}https://www.donationalerts.com/r/No_BlackMail{RESET}')
             print(f'{PINK}{BOLD}[#] {LI_G}Пример: {DARK}+7 495 766 11-11{RESET}')
             number=input(f'{PINK}{BOLD}[~] {LI_G}Введите номер телефона: {RESET}')
             number=number.replace('+', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '')
@@ -386,67 +408,51 @@ def num_mnp_request():
         except ValueError:
             sys.exit(f'{YELLOW}{BOLD}[!] {RED}Для проверки MNP включите VPN и перезапустите. Ваш провайдер не поддерживает.{RESET}')
 
-def getContact(number):
-    try:
-        num_name = []
-        phone_ow = requests.get(f'https://phonebook.space/?number=%2B{number}').text
-        content = bs(phone_ow, 'html.parser').find('div', class_='results')
-        for i in content.find_all('li'):
-            num_name.append(i.text.strip())
-
-        if not num_name:
-            print(f'{YELLOW}{BOLD}[+] {LI_G}Теги по номеру: {F_CL}Нечего нет{RESET}')
-        else:
-            print(YELLOW+BOLD+'[+]'+LI_G+' Теги с номера: '+F_CL+', '.join(num_name))
-            fileD.write('[+] Теги с номера: '+', '.join(num_name)+'\n')
-
-    except requests.exceptions.RequestException:
-        print(f'{YELLOW}{BOLD}[!] {RED}Для проверки GetContact включите VPN и перезапустите. Ваш провайдер не поддерживает.{RESET}')                        
-        
-    except ValueError:
-        print(f'{YELLOW}{BOLD}[!] {RED}Для проверки GetContact включите VPN и перезапустите. Ваш провайдер не поддерживает.{RESET}')
-        
 def get_url_name_avito(number):
     try:
         resAV = requests.get(f'https://mirror.bullshit.agency/search_by_phone/{number}')
 
         contentAV = bs(resAV.text, 'html.parser')
         h1 = contentAV.find('h1')
-        if h1.text == '503 Service Temporarily Unavailable':
-            print(f'{YELLOW}{BOLD}[!] {RED}Ваш запрос временно заблокирован. Пожалуйста, подождите 6-15 минут.{RESET}')
-        else:
-            count = 0
-            h1T = h1.text.replace("  ","")
-            print(f'\n{YELLOW}{BOLD}[~] {LI_G}Поиск данных по Авито: {RESET}')
-            print(f'{YELLOW}{BOLD}[~] {LI_G}Авито: {F_CL}{h1T}{RESET}')
-            print(f'{YELLOW}{BOLD}[+] {LI_G}------{RESET}-------------------------------------- \n')
-            for oBV in contentAV.find_all(['h4', 'span']):
-                print(f'{YELLOW}{BOLD}[+] {LI_G}{oBV.text}{RESET}')  
-                dataOB.append(oBV.text)
-            
-            with open('dataFile.txt', 'a', encoding='utf-8') as f:
-                for data in dataOB:
-                    f.write('[-] '+ data +'\n')
-            
-            for url in contentAV.find_all(['a']):
-                count += 1
-                user_link = url['href']
-                try:            
-                    avito_url = requests.get('https://mirror.bullshit.agency'+user_link)
-                    content = bs(avito_url.text, 'html.parser')
-                    url = content.find(['a'])
-                    
-                    linkAV = url['href']
-                    print(f'{YELLOW}{BOLD}[{count}] {URL_L}{UNDERLINE}{linkAV}{RESET}')
-                    
-                    u_name = bs(avito_url.text, 'html.parser')
-                    nameU = u_name.find('strong')
-                    name.append(nameU.text)
-                    dataAV.append(f'[{count}] {linkAV}')
-                except:
-                    print(f'{YELLOW}{BOLD}[{count}] {RED}{UNDERLINE}{linkAV}{RESET}')
+        if resAV.status_code == 404:
+            print(f'{YELLOW}{BOLD}[!] {LI_G}Авито: {F_CL}Объявлений не найдено{RESET}')
+        if resAV.status_code == 503:
+            print(f'{YELLOW}{BOLD}[!] {RED}Ваш запрос временно заблокирован. Пожалуйста, подождите 3-5 минут.{RESET}')
+       
+        count = 0
+        h1T = h1.text.replace("  ","")
+        print(f'\n{YELLOW}{BOLD}[~] {LI_G}Поиск данных по Авито: {RESET}')
+        print(f'{YELLOW}{BOLD}[~] {LI_G}Авито: {F_CL}{h1T}{RESET}')
 
-            # save()
+        for oBV in contentAV.find_all(['h4', 'span']):
+            print(f'{YELLOW}{BOLD}[+] {LI_G}{oBV.text}{RESET}')  
+            dataOB.append(oBV.text)
+        
+        with open('dataFile.txt', 'a', encoding='utf-8') as f:
+            for data in dataOB:
+                f.write('[-] '+ data +'\n')
+        
+        for url in contentAV.find_all(['a']):
+            count += 1
+            user_link = url['href']
+            try:            
+                avito_url = requests.get('https://mirror.bullshit.agency'+user_link)
+                content = bs(avito_url.text, 'html.parser')
+                url = content.find(['a'])
+                
+                linkAV = url['href']
+                print(f'{YELLOW}{BOLD}[{count}] {URL_L}{UNDERLINE}{linkAV}{RESET}')
+                
+                u_name = bs(avito_url.text, 'html.parser')
+                nameU = u_name.find('strong')
+                name.append(nameU.text)
+                dataAV.append(f'[{count}] {linkAV}')
+            except KeyboardInterrupt:
+                sys.exit(f'\n{YELLOW}{BOLD}[!] {RED}Принудительная остановка кода{RESET}')
+            except:
+                pass
+
+            
 
     except requests.exceptions.RequestException:
         print(f'{YELLOW}{BOLD}[!] {RED}Для проверки Avito включите VPN и перезапустите. Ваш провайдер не поддерживает.{RESET}')                        
@@ -456,7 +462,7 @@ def get_url_name_avito(number):
         
     except KeyboardInterrupt:
         sys.exit(f'\n{YELLOW}{BOLD}[!] {RED}Принудительная остановка кода{RESET}')
-        save()
+        
 def save():
     with open('dataFile.txt', 'a', encoding='utf-8') as fileD:
         fileD.write('[-] Номер: +'+str(number)+'\n')
@@ -475,7 +481,7 @@ def save():
         fileD.write(f'[-] https://twitter.com/account/begin_password_reset - Поиск аккаунтов Twitter\n')
         fileD.write(f'[-] https://viber://add?number={str(number)} - Поиск номера в Viber\n')
         fileD.write(f'[-] https://skype:{str(number)}?call - Звонок на номер с Skype\n')
-        # fileD.write(f'[-] https://nuga.app - Поиск аккаунтов Instagram' +'\n')
+        fileD.write(f'[-] https://nuga.app - Поиск аккаунтов Instagram' +'\n')
         fileD.write(f'[-] tel:{str(number)} - Звонок на номер с телефона\n\n')
     try:
         if not name:
@@ -490,15 +496,14 @@ while True:
     try:
         
         banner()
+        print(f'{YELLOW}{BOLD}[#] {LI_G}Поддержка: {DARK}https://www.donationalerts.com/r/No_BlackMail{RESET}')
         print(f'{YELLOW}{BOLD}[#] {LI_G}Пример: {DARK}+7 495 766 11-11{RESET}')
         getNumber=input(f'{YELLOW}{BOLD}[~] {LI_G}Введите номер: {RESET}')
         repNumber=getNumber.replace('+', '').replace('-', '').replace('(', '').replace(')', '').replace(' ', '')
         
         if repNumber.isdigit():
-            if repNumber[0] == '8':
-                repNumber = repNumber[1:]
-                number = '7'+repNumber
-                ######
+            if repNumber.startswith('8'):
+                number = ''.join(('7', repNumber[1:]))
             else:
                 number = repNumber
         else:
@@ -663,8 +668,7 @@ while True:
             if interNet == 0:
                 pass
             else:    
-                getContact(number)
-                
+
                 if country["country_code3"] == 'RUS':
                     name = []
                     dataAV = []
@@ -701,6 +705,7 @@ while True:
                 print(f'{YELLOW}{BOLD}[4] {URL_L}{UNDERLINE}https://twitter.com/account/begin_password_reset {RESET}- Поиск аккаунтов Twitter')
                 print(f'{YELLOW}{BOLD}[5] {URL_L}{UNDERLINE}https://viber://add?number={str(number)} {RESET}- Поиск номера в Viber')
                 print(f'{YELLOW}{BOLD}[6] {URL_L}{UNDERLINE}https://skype:{str(number)}?call {RESET}- Звонок на номер с Skype')
+                print(f'{YELLOW}{BOLD}[6] {URL_L}{UNDERLINE}https://nuga.app - Поиск аккаунтов Instagram')
                 print(f'{YELLOW}{BOLD}[7] {URL_L}{UNDERLINE}tel:{str(number)} {RESET}- Звонок на номер с телефона')
                 
                 print(f'\n{YELLOW}{BOLD}[+] {LI_G}Данные о номере: +{str(number)} добавлены в файл {RESET}dataFile.txt')
@@ -722,5 +727,4 @@ while True:
           
     except KeyboardInterrupt:
         sys.exit(f'\n{YELLOW}{BOLD}[!] {RED}Принудительная остановка кода{RESET}')
-
     

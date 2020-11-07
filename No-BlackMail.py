@@ -1,3 +1,7 @@
+# Author: Mr-X-01
+# Telegram: @Mrxanon
+# https://github.com/Mr-X-01
+
 import os, sys
 from time import sleep
 try:
